@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPath;
 import org.pitest.execute.Container;
@@ -90,35 +92,45 @@ public class MutationTestWorker {
 
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
+    
+    JSONObject js = new JSONObject();
+    js.put("mutant", mutationDetails.toJSON());
+    
+    
+    
     final List<TestUnit> relevantTests = testSource
         .translateTests(mutationDetails.getTestsInOrder());
-
+  
+    JSONArray coveringTests = new JSONArray();
+    JSONArray killingTests = new JSONArray();
+    
+    for (TestUnit t: relevantTests){
+    	coveringTests.add(t.getDescription().toString());
+    	
+    }
+        
+    
     r.describe(mutationId);
 
     final MutationStatusTestPair mutationDetected = handleMutation(mutationDetails,
         mutatedClass, relevantTests);
-    Log.write("##STARTED\n");
     
     if (this.failingTestCases == null) // AMIN
     {
         r.report(mutationId, mutationDetected);
     }
-    // AMIN HACK START
     else
     	{ 	int i = 0;
     		for (MutationStatusTestPair msp: this.failingTestCases){
-    			r.report(mutationId.clone(i ++), msp);
- 			
-    			Log.write("##MUT: " + mutationDetails + " ##TC: " + msp.getKillingTest().value() + "\n");
-	    		
-	    		}
+    			r.report(mutationId, msp);
+    			killingTests.add(msp.getKillingTest().value());
+    		}
     	    
     	}
-    Log.write("##ENDED\n");
     
-     
-    
-    
+    js.put("coveredBy", coveringTests);
+    js.put("killing", killingTests);
+    Log.write(js.toJSONString() + '\n');
     // AMIN HACK END
 
   }
@@ -148,10 +160,8 @@ public class MutationTestWorker {
 
     LOG.fine(relevantTests.size() + " relevant test for "
         + mutatedClass.getDetails().getMethod());
-    for(TestUnit t: relevantTests){
-    	Log.write("##MUT: " + mutationId + " ##TC: "+ t.getDescription() + "\n");
-    }
-
+    
+  
     final ClassLoader activeloader = pickClassLoaderForMutant(mutationId);
     final Container c = createNewContainer(activeloader);
     final long t0 = System.currentTimeMillis();

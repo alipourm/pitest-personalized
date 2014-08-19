@@ -55,9 +55,8 @@ public class Log {
 
   public static void write(String str){
 	  try {
-		
 		bw.append(str);
-		bw.flush();
+		bw.flush();	
 		
 	} catch (IOException e) {
 		// TODO Auto-generated catch block

@@ -17,6 +17,8 @@ package org.pitest.testapi;
 
 import java.io.Serializable;
 
+import org.json.simple.JSONObject;
+
 public final class Description implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -100,6 +102,13 @@ public final class Description implements Serializable {
     return true;
   }
 
+  public JSONObject toJSON(){
+	  JSONObject js = new JSONObject();
+	  js.put("testClass", this.testClass);
+	  js.put("name", this.name);
+	  return js;
+  }
+  
   @Override
   public String toString() {
     return "Description [testClass=" + this.testClass + ", name=" + this.name

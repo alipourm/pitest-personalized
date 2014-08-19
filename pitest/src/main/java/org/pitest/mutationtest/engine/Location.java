@@ -14,6 +14,9 @@
  */
 package org.pitest.mutationtest.engine;
 
+
+
+import org.json.simple.JSONObject;
 import org.pitest.classinfo.ClassName;
 
 /**
@@ -128,6 +131,15 @@ public class Location implements Comparable<Location> {
         + ", methodDesc=" + this.methodDesc + "]";
   }
 
+  
+  public JSONObject toJSON(){
+	  JSONObject js = new JSONObject();
+	  js.put("class", this.clazz.toString());
+	  js.put("method", this.method.toString());
+	  js.put("mdesc", this.methodDesc);
+	  
+	  return js;
+	 }
   public String describe() {
     return this.method.name();
   }

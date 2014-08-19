@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.pitest.classinfo.ClassName;
 
 public class MutationIdentifier implements Comparable<MutationIdentifier> {
@@ -26,7 +27,6 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
   private final Location      location;
   private final List<Integer> indexes;
   private final String        mutator;
-  private int           copy;
 
   public MutationIdentifier(final Location location, final int index,
       final String mutatorUniqueId) {
@@ -38,13 +38,13 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
     this.location = location;
     this.indexes = new ArrayList<Integer>(indexes);
     this.mutator = mutatorUniqueId;
-    this.copy    = 0;
+
   }
   
   // AMIN DIRTY HACK
   public MutationIdentifier clone(int i){
 	  MutationIdentifier s = new MutationIdentifier(this.location, this.indexes, this.mutator);
-	  s.setCopy(i);
+	
 	  return s;
   }
   
@@ -73,30 +73,32 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
     return new MutationIdentifier(this.location, id, this.mutator);
   }
 
-  // AMIN HACK
-  public void setCopy(int cpy){
-	  this.copy = cpy;
-  }
 
-  
 
   
   @Override
   public String toString() {
     return "MutationIdentifier [location=" + this.location + ", indexes="
-        + this.indexes + ", mutator=" + this.mutator + "] copy = " + this.copy;
+        + this.indexes + ", mutator=" + this.mutator + "]";
   }
 
   
-  // AMIN HACK
-  public boolean matches(final MutationIdentifier newId) {
+  public JSONObject toJSON(){
+	  JSONObject js = new JSONObject();
+	  js.put("location", this.location.toJSON());
+	  js.put("indexes", this.indexes.toString());
+	  js.put("mutator", this.mutator);
+	  return js;
+  }
+  
+  
+    public boolean matches(final MutationIdentifier newId) {
     return this.location.equals(newId.location)
         && this.mutator.equals(newId.mutator)
-        && this.indexes.contains(newId.getFirstIndex())
-        && this.copy == newId.copy;
+        && this.indexes.contains(newId.getFirstIndex());
   }
 
-  // AMIN HACK
+  
   public ClassName getClassName() {
     return this.location.getClassName();
   }
@@ -111,7 +113,7 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
         + ((this.location == null) ? 0 : this.location.hashCode());
     result = (prime * result)
         + ((this.mutator == null) ? 0 : this.mutator.hashCode());
-    result += this.copy;
+  
     return result;
   }
 
@@ -147,8 +149,7 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
       }
     } else if (!this.mutator.equals(other.mutator)) {
       return false;
-    } else if (this.copy != other.copy) // AMIN HACK
-    	return false;
+    } 
     return true;
   }
 

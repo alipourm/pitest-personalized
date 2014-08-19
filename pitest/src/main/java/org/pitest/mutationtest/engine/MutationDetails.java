@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.TestInfo;
@@ -51,12 +52,25 @@ public class MutationDetails {
     this.poison = poison;
   }
 
+
+  
   @Override
   public String toString() {
-    return "MutationDetails [id=" + this.id + ", filename=" + this.filename
+	  return "MutationDetails [id=" + this.id + ", filename=" + this.filename
         + ", block=" + this.block + ", lineNumber=" + this.lineNumber
         + ", description=" + this.description + ", testsInOrder="
         + this.testsInOrder + "]";
+  }
+
+  
+  public JSONObject toJSON(){
+	  JSONObject js = new JSONObject();
+	  js.put("id", this.id.toJSON());
+	  js.put("filename", this.filename);
+	  js.put("block", this.block);
+	  js.put("line", this.lineNumber);
+	  return js;
+	  
   }
 
   public String getDescription() {
