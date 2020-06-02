@@ -230,7 +230,7 @@
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <!-- 1.4.4 and 1.4.5 seems to have an issue with java 8 -->
-      <version>1.4.2</version>
+      <version>1.4.6</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
