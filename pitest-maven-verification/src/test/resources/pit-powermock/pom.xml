@@ -65,7 +65,7 @@
 
 	
 	<properties>
-		<junit.version>4.8.1</junit.version>	
+		<junit.version>4.13.1</junit.version>	
 		<powermock.version>1.5.4</powermock.version>
 	</properties>
 
